@@ -11,7 +11,7 @@ include $(MakePath)/trait/adaptive.mk
 include $(MakePath)/trait/sce.mk
 include $(MakePath)/trait/kernel.mk
 include $(MakePath)/trait/base.mk
-include $(MakePath)/trait/system_call_rop_0x93a4FFFF8.mk
+include $(MakePath)/trait/system_call_rop_0x9263FFFF8.mk
 
 ###################################
 

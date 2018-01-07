@@ -2,6 +2,9 @@
 #include <elf.h>
 
 #include <ps4/kernel.h>
+#include <ps4/kernel/firmware_tables.h>
+
+extern uint32_t sdkVersion;
 
 static Elf64_Sym *ps4KernelDlSymElfSymbols;
 static char *ps4KernelDlSymElfStrings;
@@ -11,6 +14,7 @@ static void ps4KernelDlSymInitialize(void)
 	void *kernelAddress = ps4KernelSeekElfAddress();
 	if(kernelAddress == NULL)
 		return;
+		
 
 	// Ah, old-school/kernel C naming conventions ... terrible stuff
 	Elf64_Ehdr *ehdr = (Elf64_Ehdr *)kernelAddress;
@@ -38,10 +42,48 @@ static void ps4KernelDlSymInitialize(void)
 		}
 }
 
+int ps4KernelStaticLookup(const char *name, void **value)
+{
+	void* kernel_base = ps4KernelSeekElfAddress();
+
+	sym_t* table;
+	switch(sdkVersion)
+	{
+		case 0x04050001:
+			table = table405;
+			break;
+		default:
+			return PS4_ERROR_KERNEL_SYMBOL_LOOKUP_NOT_FOUND;
+	}
+
+	for (sym_t *p = table; p->name != NULL; ++p)
+	{
+		char *n = p->name;
+	
+		int j;
+		for(j = 0; n[j] == name[j] && n[j] != 0; ++j);
+			if(j > 0 && n[j] == '\0' && name[j] == '\0')
+			{
+					*(uint64_t *)value = (uint64_t *)kernel_base + p->offset;
+					return PS4_OK;
+			}
+	}
+	return PS4_ERROR_KERNEL_SYMBOL_LOOKUP_NOT_FOUND;
+}
+
 void *ps4KernelDlSym(char *name)
 {
 	Elf64_Sym *symbol;
-
+	if(name==NULL)
+	{
+		return NULL;
+	}
+	if(sdkVersion > 0x01760001)
+	{
+		void **address = NULL;
+		ps4KernelStaticLookup(name, address);
+		return address;
+	}
 	if(ps4KernelDlSymElfSymbols == NULL || ps4KernelDlSymElfStrings == NULL)
 		ps4KernelDlSymInitialize();
 

@@ -4,6 +4,7 @@
 //{
 void *ps4KernelSeekElfAddress();
 void *ps4KernelDlSym(char *name);
+int ps4KernelStaticLookup(const char *name, void **value);
 //}
 
 int ps4KernelBrewCoffee();
