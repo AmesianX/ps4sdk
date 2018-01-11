@@ -7,6 +7,8 @@
 #include <ps4/payload.h>
 #include <ps4/exploit.h>
 
+extern uint32_t sdkVersion;
+
 int ps4KernelExecute(void *fn, void *uap, int64_t *ret0, int64_t *ret1)
 {
 	// kernel namespace should be agnostic to kern types
@@ -23,22 +25,46 @@ int ps4KernelExecute(void *fn, void *uap, int64_t *ret0, int64_t *ret1)
 			ps4KernelThreadGetSecondaryReturn(td, ret1);
 		return r;
 	}
-
-	if(syscall(SYS_ps4_callback, NULL) == -1)
+	if(sdkVersion > 0x01760001)
 	{
-		Ps4SystemCallGenericCallArgument u = {0};
-		u.function = (void *)ps4KernelSystemCallCopyInAndPatch;
-		u.rdi = SYS_ps4_callback;
-		u.rsi = (register_t)ps4SystemCallGenericExecute;
-		u.rdx = 128; // Ah, getting function sizes in C ... (-_-)'
-		u.rcx = 4;
-		ps4ExploitExecute((sy_call_t *)ps4SystemCallGenericCall, &u, NULL, NULL, NULL);
-		if(syscall(SYS_ps4_callback, NULL) == -1)
+		if(ps4AssemblerSystemCall(SYS_ps4_callback, NULL)==-1)
 		{
-			//*errno = EAGAIN;
-			return -1;
+				Ps4SystemCallGenericCallArgument u = {0};
+				u.function = (void *)ps4KernelSystemCallCopyInAndPatch;
+				u.rdi = SYS_ps4_callback;
+				u.rsi = (register_t)ps4SystemCallGenericExecute;
+				u.rdx = 128; // Ah, getting function sizes in C ... (-_-)'
+				u.rcx = 4;
+				ps4AssemblerSystemCall(11,(sy_call_t *)ps4SystemCallGenericCall, &u, NULL, NULL, NULL);
+				if(ps4AssemblerSystemCall(SYS_ps4_callback, NULL) == -1)
+				{
+					//*errno = EAGAIN;
+					return -1;
+				}
 		}
+		return ps4AssemblerSystemCall(SYS_ps4_callback, fn, uap, ret0, ret1);
+		
+		
+	}
+	else
+	{
+		if(ps4AssemblerSystemCall(SYS_ps4_callback, NULL) == -1)
+		{
+			Ps4SystemCallGenericCallArgument u = {0};
+			u.function = (void *)ps4KernelSystemCallCopyInAndPatch;
+			u.rdi = SYS_ps4_callback;
+			u.rsi = (register_t)ps4SystemCallGenericExecute;
+			u.rdx = 128; // Ah, getting function sizes in C ... (-_-)'
+			u.rcx = 4;
+			ps4ExploitExecute((sy_call_t *)ps4SystemCallGenericCall, &u, NULL, NULL, NULL);
+			if(ps4AssemblerSystemCall(SYS_ps4_callback, NULL) == -1)
+			{
+				//*errno = EAGAIN;
+				return -1;
+			}
+		}
+		return ps4AssemblerSystemCall(SYS_ps4_callback, fn, uap, ret0, ret1);
+		
 	}
 
-	return syscall(SYS_ps4_callback, fn, uap, ret0, ret1);
 }

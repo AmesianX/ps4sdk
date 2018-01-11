@@ -42,7 +42,7 @@ static void ps4KernelDlSymInitialize(void)
 		}
 }
 
-int ps4KernelStaticLookup(const char *name, void **value)
+void  *ps4KernelStaticLookup(const char *name)
 {
 	void* kernel_base = ps4KernelSeekElfAddress();
 
@@ -53,22 +53,23 @@ int ps4KernelStaticLookup(const char *name, void **value)
 			table = table405;
 			break;
 		default:
-			return PS4_ERROR_KERNEL_SYMBOL_LOOKUP_NOT_FOUND;
+			return NULL;
 	}
 
 	for (sym_t *p = table; p->name != NULL; ++p)
 	{
-		char *n = p->name;
+		const char *n = p->name;
 	
 		int j;
 		for(j = 0; n[j] == name[j] && n[j] != 0; ++j);
-			if(j > 0 && n[j] == '\0' && name[j] == '\0')
-			{
-					*(uint64_t *)value = (uint64_t *)kernel_base + p->offset;
-					return PS4_OK;
-			}
+		
+		if(j > 0 && n[j] == '\0' && name[j] == '\0')
+		{
+			return (void *)(kernel_base + p->offset);
+				
+		}
 	}
-	return PS4_ERROR_KERNEL_SYMBOL_LOOKUP_NOT_FOUND;
+	return NULL;
 }
 
 void *ps4KernelDlSym(char *name)
@@ -80,9 +81,9 @@ void *ps4KernelDlSym(char *name)
 	}
 	if(sdkVersion > 0x01760001)
 	{
-		void **address = NULL;
-		ps4KernelStaticLookup(name, address);
-		return address;
+		//void **address = NULL;
+		return ps4KernelStaticLookup(name);
+		//return address;
 	}
 	if(ps4KernelDlSymElfSymbols == NULL || ps4KernelDlSymElfStrings == NULL)
 		ps4KernelDlSymInitialize();

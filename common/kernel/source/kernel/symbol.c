@@ -27,7 +27,7 @@ int ps4KernelSymbolLookUp(const char *str, void **value)
 	if(value == NULL)
 		return PS4_ERROR_ARGUMENT_OUT_MISSING;
 
-	if(sdkVersion > 0x01760001)	
+	/*if(sdkVersion > 0x01760001)	
 	{
 		void *v = ps4KernelDlSym((char *)str);
 		if(v == NULL)
@@ -35,11 +35,12 @@ int ps4KernelSymbolLookUp(const char *str, void **value)
 		*value=v;
 	}
 	else
-	{
+	{*/
 	
 	if(cache == NULL)
 	{
 		struct mtx *giant = ps4KernelDlSym("Giant");
+		
 
 		mtx_lock(giant);
 		r = ps4KernelCacheGlobalGet(PS4_KERNEL_CACHE_SYMBOL_LOOKUP_CACHE, (void **)&cache);
@@ -66,8 +67,9 @@ int ps4KernelSymbolLookUp(const char *str, void **value)
 		else
 			r = ps4KernelCacheGlobalGet(PS4_KERNEL_CACHE_SYMBOL_LOOKUP_MUTEX, (void **)&ps4KernelSymbolLookUpMutex);
 		mtx_unlock(giant);
+		
 	}
-
+    
 	mtx_lock(ps4KernelSymbolLookUpMutex);
 	r = ps4KernelCacheGet(cache, str, value);
 	if(r != PS4_OK)
@@ -79,7 +81,7 @@ int ps4KernelSymbolLookUp(const char *str, void **value)
 			return PS4_ERROR_KERNEL_SYMBOL_LOOKUP_NOT_FOUND;
 	}
 	mtx_unlock(ps4KernelSymbolLookUpMutex);
-	}
+	//}
 	return PS4_OK;
 	
 }
