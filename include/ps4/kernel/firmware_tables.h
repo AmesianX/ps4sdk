@@ -8,4 +8,6 @@ typedef struct sym_t
 } sym_t;
 
 #include <ps4/kernel/405_kernel_sym.h>
+#include <ps4/kernel/505_kernel_sym.h>
+
 //add other kernels follow this syntax

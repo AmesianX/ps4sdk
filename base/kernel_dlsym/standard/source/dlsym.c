@@ -52,6 +52,9 @@ void  *ps4KernelStaticLookup(const char *name)
 		case 0x04050001:
 			table = table405;
 			break;
+		case 0x05050031:
+			table = table505;
+			break;
 		default:
 			return NULL;
 	}

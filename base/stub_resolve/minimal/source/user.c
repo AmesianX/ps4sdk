@@ -3,7 +3,7 @@
 
 #include <ps4/stub_resolve.h>
 //by default 1.76 you can change to your own
-uint32_t sdkVersion=0x01760001;
+uint32_t sdkVersion=0x05050031;
 
 __asm__("\
 	.pushsection .text \n \
@@ -74,7 +74,7 @@ int ps4StubResolve(void *stub, char *moduleName, char *functionName, int *module
 				
 		}
 		//we have not yet resolve symbols and we need libkernel first so to get our symbols resolved we load a valid libkernel module to get a valid handle
-		if(sdkVersion==0x04050001 && moduleName[0]=='l' && moduleName[1]=='i' && moduleName[2]=='b' && moduleName[3]=='k' && moduleName[4]=='e' && moduleName[5]=='r' && moduleName[6]=='n' && moduleName[7]=='e' && moduleName[8]=='l')
+		if(sdkVersion>=0x04050001 && moduleName[0]=='l' && moduleName[1]=='i' && moduleName[2]=='b' && moduleName[3]=='k' && moduleName[4]=='e' && moduleName[5]=='r' && moduleName[6]=='n' && moduleName[7]=='e' && moduleName[8]=='l')
 		{	
 			//by now in 4.05 we force to use libkernel_web.sprx instead libkernel.sprx in webkit context need to see why libkernel.sprx return -1
 			*moduleHandle = ps4StubResolveLoadStartModule("libkernel_web.sprx", 0, NULL, 0, NULL, NULL);

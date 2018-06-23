@@ -8,10 +8,10 @@ include $(CURDIR)/libcinternals.mk
 # all libc functions here
 #include $(CURDIR)/libcs.mk
 # all libkernel functions here
-include $(CURDIR)/libkernels405.mk
+include $(CURDIR)/libkernels505.mk
 
 # we externalize these three because of size and to generate adaptive libs
-$(eval $(call generateModule, libSceLibcInternal, $(libCInternals)))
+$(eval $(call generateModuleLarge, libSceLibcInternal, $(libCInternals)))
 #$(eval $(call generateModule, libc, $(libcs)))
 $(eval $(call generateModule, libkernel, $(libKernels)))
 
