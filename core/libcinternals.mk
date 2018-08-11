@@ -168,6 +168,7 @@ __mulvdi3 \
 __mulvsi3 \
 __mulvti3 \
 __mulxc3 \
+__mb_sb_limit \
 __nedf2 \
 __negdf2 \
 __negdi2 \
@@ -294,6 +295,7 @@ _Cnd_unregister_at_thread_exit \
 _Cnd_wait \
 _Cosh \
 _Costate \
+_CurrentRuneLocale \
 _CStrftime \
 _CStrxfrm \
 _CTinfo \
@@ -302,6 +304,7 @@ _CWcsxfrm \
 _Daysto \
 _Dbl \
 _Dclass \
+_DefaultRuneLocale \
 _Deletegloballocale \
 _Denorm \
 _Dint \
