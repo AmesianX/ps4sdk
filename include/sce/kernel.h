@@ -23,6 +23,15 @@ uint64_t sceKernelGetProcessTime(void);
 unsigned int sceKernelSleep(unsigned int seconds);
 void scePthreadExit(void *value);
 void scePthreadYield(void);
+int scePthreadGetprio(ScePthread thread, int *p);
+int scePthreadSetprio(ScePthread thread, int p);
+int scePthreadGetname(ScePthread thread, char * name);
+
+int sceKernelCreateSema(SceKernelSema *s, const char *name, uint32_t attr, int count, int maxCount, void *);
+int sceKernelDeleteSema(SceKernelSema s);
+int sceKernelPollSema(SceKernelSema s, int count);
+int sceKernelWaitSema(SceKernelSema s, int count, SceKernelUseconds *t);
+int sceKernelSignalSema(SceKernelSema s, int signal);
 
 int sceKernelCreateEqueue(SceKernelEqueue *eq, const char *name);
 int sceKernelDeleteEqueue(SceKernelEqueue eq);
