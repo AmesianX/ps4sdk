@@ -8,8 +8,6 @@
 	#define MAP_TYPE 0x0f
 #endif
 
-
-
 typedef struct SceKernelModuleSegmentInfo
 {
     void *address;
@@ -34,7 +32,8 @@ typedef void *ScePthread;
 typedef void *ScePthreadAttr;
 typedef void *ScePthreadMutex;
 typedef void *ScePthreadMutexattr;
+typedef void *SceKernelSema;
 typedef uint32_t SceKernelModule;
 
-typedef uint64_t SceKernelEqueue;
+typedef int64_t SceKernelEqueue;
 typedef struct kevent SceKernelEvent;

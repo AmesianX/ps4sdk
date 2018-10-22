@@ -16,7 +16,7 @@ typedef struct Ps4MemoryProtected
 	size_t size;
 }
 Ps4MemoryProtected;
-
+extern uint32_t sdkVersion;
 int ps4MemoryProtectedCreate(Ps4MemoryProtected **memory, size_t size)
 {
 	int executableHandle, writableHandle;
@@ -35,23 +35,36 @@ int ps4MemoryProtectedCreate(Ps4MemoryProtected **memory, size_t size)
 
 	m->size = (size / pageSize + 1) * pageSize; // align to pageSize
 
-	sceKernelJitCreateSharedMemory(0, m->size, PROT_READ | PROT_WRITE | PROT_EXEC, &executableHandle);
-	if(executableHandle == 0)
-		goto e1;
-	sceKernelJitCreateAliasOfSharedMemory(executableHandle, PROT_READ | PROT_WRITE, &writableHandle);
-	if(writableHandle == 0)
-		goto e2;
-	//sceKernelJitMapSharedMemory(m->writableHandle, PROT_CPU_READ | PROT_CPU_WRITE, &writable);
-	m->executable = mmap(NULL, m->size, PROT_READ | PROT_EXEC, MAP_SHARED, executableHandle, 0);
-	if(m->executable == MAP_FAILED)
-		goto e3;
-	m->writable = mmap(NULL, m->size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_TYPE, writableHandle, 0);
-	if(m->writable == MAP_FAILED)
-		goto e4;
+	if(sdkVersion > 0x01760001)
+	{
+		m->executable = mmap(NULL, m->size, 7, 0x1000, -1, 0);
+		if(m->executable == MAP_FAILED)
+			goto e1;
+		m->writable = m->executable;
+		if(m->writable == MAP_FAILED)
+			goto e1;
+	}
+	else
+	{
+		
+	
+		sceKernelJitCreateSharedMemory(0, m->size, PROT_READ | PROT_WRITE | PROT_EXEC, &executableHandle);
+		if(executableHandle == 0)
+			goto e1;
+		sceKernelJitCreateAliasOfSharedMemory(executableHandle, PROT_READ | PROT_WRITE, &writableHandle);
+		if(writableHandle == 0)
+			goto e2;
+		//sceKernelJitMapSharedMemory(m->writableHandle, PROT_CPU_READ | PROT_CPU_WRITE, &writable);
+		m->executable = mmap(NULL, m->size, PROT_READ | PROT_EXEC, MAP_SHARED, executableHandle, 0);
+		if(m->executable == MAP_FAILED)
+			goto e3;
+		m->writable = mmap(NULL, m->size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_TYPE, writableHandle, 0);
+		if(m->writable == MAP_FAILED)
+			goto e4;
 
-	close(executableHandle);
-	close(writableHandle);
-
+		close(executableHandle);
+		close(writableHandle);
+	}
 	*memory = m;
 	return PS4_OK;
 

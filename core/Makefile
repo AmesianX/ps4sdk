@@ -70,6 +70,14 @@ $(call generateLibrary, function, $(1), $(1), $(2), $(BuildPath)/$(strip $(1))/$
 
 endef
 
+#generateModuleLarge <module> <symbols>
+define generateModuleLarge
+$(call generateObject, module, $(1), $(1), $(1))
+$(call generateLibraryLarge, function, $(1), $(1), $(2), $(BuildPath)/$(strip $(1))/$(strip $(1)).stub.o)
+
+endef
+
+
 include $(CURDIR)/stub.mk
 
 ###################################
