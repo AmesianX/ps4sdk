@@ -23,7 +23,7 @@ int ps4KernelThreadGetReturn(Ps4KernelThread *td, register_t *ret)
 	if(ret == NULL)
 		return PS4_ERROR_ARGUMENT_OUT_MISSING;
 	//return td->retval[0];
-	*ret = *((register_t *)&(((int8_t *)td)[0x380]));
+	*ret = *((register_t *)&(((int8_t *)td)[0x398]));
 	return PS4_OK;
 }
 
@@ -39,7 +39,7 @@ int ps4KernelThreadGetSecondaryReturn(Ps4KernelThread *td, register_t *ret)
 		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
 	if(ret == NULL)
 		return PS4_ERROR_ARGUMENT_OUT_MISSING;
-	*ret = *((register_t *)&(((int8_t *)td)[0x388]));
+	*ret = *((register_t *)&(((int8_t *)td)[0x3A0]));
 	return PS4_OK;
 }
 
@@ -48,7 +48,7 @@ int ps4KernelThreadSetReturn(Ps4KernelThread *td, register_t ret)
 	//return td->retval[0];
 	if(td == NULL)
 		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
-	*((register_t *)&(((int8_t *)td)[0x380])) = ret;
+	*((register_t *)&(((int8_t *)td)[0x398])) = ret;
 	return PS4_OK;
 }
 
@@ -62,6 +62,6 @@ int ps4KernelThreadSetSecondaryReturn(Ps4KernelThread *td, register_t ret)
 	//return td->retval[1];
 	if(td == NULL)
 		return PS4_ERROR_ARGUMENT_PRIMARY_MISSING;
-	*((register_t *)&(((int8_t *)td)[0x388])) = ret;
+	*((register_t *)&(((int8_t *)td)[0x3A0])) = ret;
 	return PS4_OK;
 }

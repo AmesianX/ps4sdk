@@ -18,12 +18,12 @@ static void *ps4KernelExecuteCurrentThread()
 
 static inline register_t ps4KernelExecuteThreadGetReturn0(struct thread *td)
 {
-	return *((register_t *)&(((int8_t *)td)[0x380]));
+	return *((register_t *)&(((int8_t *)td)[0x398]));
 }
 
 static inline register_t ps4KernelExecuteThreadGetReturn1(struct thread *td)
 {
-	return *((register_t *)&(((int8_t *)td)[0x388]));
+	return *((register_t *)&(((int8_t *)td)[0x3A0]));
 }
 
 int ps4KernelExecute(void *fn, void *uap, int64_t *ret0, int64_t *ret1)
